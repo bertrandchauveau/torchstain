@@ -28,31 +28,31 @@ class TorchMacenkoNormalizer(HENormalizer):
         OD = -torch.log((I.reshape((-1, I.shape[-1])).float() + 1)/Io).to(self.device)
 
         # remove transparent pixels
-        ODhat = OD[~torch.any(OD < beta, dim=1)]
+        ODhat = OD[~torch.any(OD < beta, dim=1)].to(self.device)
 
         return OD, ODhat
 
     def __find_HE(self, ODhat, eigvecs, alpha):
         # project on the plane spanned by the eigenvectors corresponding to the two
         # largest eigenvalues
-        That = torch.matmul(ODhat, eigvecs)
-        phi = torch.atan2(That[:, 1], That[:, 0])
+        That = torch.matmul(ODhat, eigvecs).to(self.device)
+        phi = torch.atan2(That[:, 1], That[:, 0]).to(self.device)
 
         minPhi = percentile(phi, alpha, device=self.device)
         maxPhi = percentile(phi, 100 - alpha, device=self.device)
 
-        vMin = torch.matmul(eigvecs, torch.stack((torch.cos(minPhi), torch.sin(minPhi)))).unsqueeze(1)
-        vMax = torch.matmul(eigvecs, torch.stack((torch.cos(maxPhi), torch.sin(maxPhi)))).unsqueeze(1)
+        vMin = torch.matmul(eigvecs, torch.stack((torch.cos(minPhi), torch.sin(minPhi)))).unsqueeze(1).to(self.device)
+        vMax = torch.matmul(eigvecs, torch.stack((torch.cos(maxPhi), torch.sin(maxPhi)))).unsqueeze(1).to(self.device)
 
         # a heuristic to make the vector corresponding to hematoxylin first and the
         # one corresponding to eosin second
-        HE = torch.where(vMin[0] > vMax[0], torch.cat((vMin, vMax), dim=1), torch.cat((vMax, vMin), dim=1))
+        HE = torch.where(vMin[0] > vMax[0], torch.cat((vMin, vMax), dim=1), torch.cat((vMax, vMin), dim=1)).to(self.device)
 
         return HE
 
     def __find_concentration(self, OD, HE):
         # rows correspond to channels (RGB), columns to OD values
-        Y = OD.T
+        Y = OD.T.to(self.device)
 
         # determine concentrations of the individual stains
         if not self.updated_lstsq:
@@ -79,8 +79,8 @@ class TorchMacenkoNormalizer(HENormalizer):
         I = I.to(self.device)
         HE, _, maxC = self.__compute_matrices(I, Io, alpha, beta)
 
-        self.HERef = HE
-        self.maxCRef = maxC
+        self.HERef = HE.to(self.device)
+        self.maxCRef = maxC.to(self.device)
 
     def normalize(self, I, Io=240, alpha=1, beta=0.15, stains=True):
         ''' Normalize staining appearence of H&E stained images
@@ -111,7 +111,7 @@ class TorchMacenkoNormalizer(HENormalizer):
         HE, C, maxC = self.__compute_matrices(I, Io, alpha, beta)
 
         # normalize stain concentrations
-        C *= (self.maxCRef / maxC).unsqueeze(-1)
+        C *= (self.maxCRef / maxC).unsqueeze(-1).to(self.device)
 
         # recreate the image using reference mixing matrix
         Inorm = Io * torch.exp(-torch.matmul(self.HERef, C))
