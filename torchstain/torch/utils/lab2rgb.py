@@ -1,6 +1,7 @@
 import torch
 from torchstain.torch.utils.rgb2lab import _rgb2xyz, _white
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 _rgb2xyz = _rgb2xyz.to(device)
 _white = _white.to(device)
 _xyz2rgb = torch.linalg.inv(_rgb2xyz)
