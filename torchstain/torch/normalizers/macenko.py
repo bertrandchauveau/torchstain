@@ -38,8 +38,8 @@ class TorchMacenkoNormalizer(HENormalizer):
         That = torch.matmul(ODhat, eigvecs)
         phi = torch.atan2(That[:, 1], That[:, 0])
 
-        minPhi = percentile(phi, alpha)
-        maxPhi = percentile(phi, 100 - alpha)
+        minPhi = percentile(phi, alpha, device=self.device)
+        maxPhi = percentile(phi, 100 - alpha, device=self.device)
 
         vMin = torch.matmul(eigvecs, torch.stack((torch.cos(minPhi), torch.sin(minPhi)))).unsqueeze(1)
         vMax = torch.matmul(eigvecs, torch.stack((torch.cos(maxPhi), torch.sin(maxPhi)))).unsqueeze(1)
@@ -64,13 +64,13 @@ class TorchMacenkoNormalizer(HENormalizer):
         OD, ODhat = self.__convert_rgb2od(I, Io=Io, beta=beta)
 
         # compute eigenvectors
-        _, eigvecs = torch.linalg.eigh(cov(ODhat.T)) 
+        _, eigvecs = torch.linalg.eigh(cov(ODhat.T, device=self.device)) 
         eigvecs = eigvecs[:, [1, 2]]
 
         HE = self.__find_HE(ODhat, eigvecs, alpha)
 
         C = self.__find_concentration(OD, HE)
-        maxC = torch.stack([percentile(C[0, :], 99), percentile(C[1, :], 99)])
+        maxC = torch.stack([percentile(C[0, :], 99, device=self.device), percentile(C[1, :], 99, device=self.device)])
 
         return HE, C, maxC
 
