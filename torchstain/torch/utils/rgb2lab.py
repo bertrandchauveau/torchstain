@@ -3,9 +3,9 @@ import torch
 # constant conversion matrices between color spaces: https://gist.github.com/bikz05/6fd21c812ef6ebac66e1
 _rgb2xyz = torch.tensor([[0.412453, 0.357580, 0.180423],
                         [0.212671, 0.715160, 0.072169],
-                        [0.019334, 0.119193, 0.950227]])
+                        [0.019334, 0.119193, 0.950227]], device=device)
                         
-_white = torch.tensor([0.95047, 1., 1.08883])
+_white = torch.tensor([0.95047, 1., 1.08883], device=device)
 
 def rgb2lab(rgb):
     arr = rgb.type(torch.float32)
