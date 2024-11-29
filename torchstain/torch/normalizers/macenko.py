@@ -7,13 +7,16 @@ Source code ported from: https://github.com/schaugf/HEnorm_python
 Original implementation: https://github.com/mitkovetta/staining-normalization
 """
 class TorchMacenkoNormalizer(HENormalizer):
-    def __init__(self):
+    def __init__(self, device=None):
         super().__init__()
-
+        
+        # Default to 'cuda' if available, otherwise 'cpu'
+        self.device = device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
+        
         self.HERef = torch.tensor([[0.5626, 0.2159],
                                    [0.7201, 0.8012],
-                                   [0.4062, 0.5581]], device=device)
-        self.maxCRef = torch.tensor([1.9705, 1.0308], device=device)
+                                   [0.4062, 0.5581]], device=self.device)
+        self.maxCRef = torch.tensor([1.9705, 1.0308], device=self.device)
 
         # Avoid using deprecated torch.lstsq (since 1.9.0)
         self.updated_lstsq = hasattr(torch.linalg, 'lstsq')
@@ -22,7 +25,7 @@ class TorchMacenkoNormalizer(HENormalizer):
         I = I.permute(1, 2, 0)
 
         # calculate optical density
-        OD = -torch.log((I.reshape((-1, I.shape[-1])).float() + 1)/Io)
+        OD = -torch.log((I.reshape((-1, I.shape[-1])).float() + 1)/Io).to(self.device)
 
         # remove transparent pixels
         ODhat = OD[~torch.any(OD < beta, dim=1)]
@@ -72,6 +75,8 @@ class TorchMacenkoNormalizer(HENormalizer):
         return HE, C, maxC
 
     def fit(self, I, Io=240, alpha=1, beta=0.15):
+        # Move the input tensor to the specified device
+        I = I.to(self.device)
         HE, _, maxC = self.__compute_matrices(I, Io, alpha, beta)
 
         self.HERef = HE
@@ -99,6 +104,8 @@ class TorchMacenkoNormalizer(HENormalizer):
             A method for normalizing histology slides for quantitative analysis. M.
             Macenko et al., ISBI 2009
         '''
+        # Move the input tensor to the specified device
+        I = I.to(self.device)
         c, h, w = I.shape
 
         HE, C, maxC = self.__compute_matrices(I, Io, alpha, beta)
