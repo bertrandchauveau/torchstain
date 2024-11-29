@@ -20,5 +20,6 @@ def percentile(t: torch.Tensor, q: float) -> Union[int, float]:
     # Note that ``kthvalue()`` works one-based, i.e. the first sorted value
     # indeed corresponds to k=1, not k=0! Use float(q) instead of q directly,
     # so that ``round()`` returns an integer, even if q is a np.float32.
+    t = t.to(device)
     k = 1 + round(.01 * float(q) * (t.numel() - 1))
     return t.view(-1).kthvalue(k).values
