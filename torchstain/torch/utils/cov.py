@@ -1,6 +1,6 @@
 import torch
 
-def cov(x):
+def cov(x, device='cpu'):
     """
     https://en.wikipedia.org/wiki/Covariance_matrix
     """
