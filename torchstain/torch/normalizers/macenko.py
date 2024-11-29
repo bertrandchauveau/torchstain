@@ -12,8 +12,8 @@ class TorchMacenkoNormalizer(HENormalizer):
 
         self.HERef = torch.tensor([[0.5626, 0.2159],
                                    [0.7201, 0.8012],
-                                   [0.4062, 0.5581]])
-        self.maxCRef = torch.tensor([1.9705, 1.0308])
+                                   [0.4062, 0.5581]], device=device)
+        self.maxCRef = torch.tensor([1.9705, 1.0308], device=device)
 
         # Avoid using deprecated torch.lstsq (since 1.9.0)
         self.updated_lstsq = hasattr(torch.linalg, 'lstsq')
