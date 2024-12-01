@@ -8,5 +8,8 @@ def ReinhardNormalizer(backend='numpy', method=None):
     elif backend == "tensorflow":
         from torchstain.tf.normalizers import TensorFlowReinhardNormalizer
         return TensorFlowReinhardNormalizer(method=method)
+    elif backend == "cupy":
+        from torchstain.cupy.normalizers import CupyReinhardNormalizer
+        return CupyReinhardNormalizer(method=method)
     else:
         raise Exception(f'Unknown backend {backend}')
