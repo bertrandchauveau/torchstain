@@ -8,5 +8,8 @@ def MacenkoNormalizer(backend='torch'):
     elif backend == "tensorflow":
         from torchstain.tf.normalizers.macenko import TensorFlowMacenkoNormalizer
         return TensorFlowMacenkoNormalizer()
+    elif backend == "cupy":
+        from torchstain.cupy.normalizers.macenko import CupyMacenkoNormalizer
+        return CupyMacenkoNormalizer()
     else:
         raise Exception(f'Unknown backend {backend}')
