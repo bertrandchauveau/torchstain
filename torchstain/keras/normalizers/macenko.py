@@ -32,11 +32,9 @@ class NumpyMacenkoNormalizer(HENormalizer):
         phi = keras.ops.arctan2(That[:,1],That[:,0])
 
 
-        #not in keras.ops, as well as np.cov
-        minPhi = np.percentile(phi, alpha)
-        maxPhi = np.percentile(phi, 100-alpha)
-
-
+        #np.percentile not in keras.ops
+        minPhi = keras.ops.quantile(phi, alpha/100)
+        maxPhi = keras.ops.quantile(phi, (100-alpha)/100)
       
         vMin = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor(np.array([(keras.ops.cos(minPhi), keras.ops.sin(minPhi))]).T))
         vMax = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor(np.array([(keras.ops.cos(maxPhi), keras.ops.sin(maxPhi))]).T))
@@ -65,6 +63,7 @@ class NumpyMacenkoNormalizer(HENormalizer):
         OD, ODhat = self.__convert_rgb2od(I, Io=Io, beta=beta)
 
         # compute eigenvectors
+        #np.cov not in keras.ops
         _, eigvecs = keras.ops.eigh(np.cov(ODhat.T))
 
         HE = self.__find_HE(ODhat, eigvecs, alpha)
@@ -72,7 +71,7 @@ class NumpyMacenkoNormalizer(HENormalizer):
         C = self.__find_concentration(OD, HE)
 
         # normalize stain concentrations
-        maxC = keras.ops.convert_to_tensor((np.array([np.percentile(C[0,:], 99), np.percentile(C[1,:],99)]))
+        maxC = keras.ops.convert_to_tensor((np.array([keras.ops.quantile(C[0,:], 99/100), keras.ops.quantile(C[1,:],99/100)]))
 
         return HE, C, maxC
 
