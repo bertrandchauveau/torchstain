@@ -11,5 +11,8 @@ def MacenkoNormalizer(backend='torch'):
     elif backend == "cupy":
         from torchstain.cupy.normalizers.macenko import CupyMacenkoNormalizer
         return CupyMacenkoNormalizer()
+    elif backend == "keras":
+        from torchstain.keras.normalizers.macenko import KerasMacenkoNormalizer
+        return KerasMacenkoNormalizer()
     else:
         raise Exception(f'Unknown backend {backend}')
