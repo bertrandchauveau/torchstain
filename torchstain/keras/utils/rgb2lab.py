@@ -1,3 +1,4 @@
+import numpy as np
 import keras
 
 # constant conversion matrices between color spaces: https://gist.github.com/bikz05/6fd21c812ef6ebac66e1
