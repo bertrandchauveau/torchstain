@@ -8,7 +8,7 @@ def cmerge(I1, I2, I3):
     return keras.ops.stack([I1, I2, I3], axis=-1)
 
 def lab_split(I):
-    I = I.astype("float32")
+    I = keras.ops.cast(I, dtype="float32")
     I1, I2, I3 = csplit(I)
     return I1 / 2.55, I2 - 128, I3 - 128
 
