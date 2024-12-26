@@ -11,5 +11,8 @@ def ReinhardNormalizer(backend='numpy', method=None):
     elif backend == "cupy":
         from torchstain.cupy.normalizers import CupyReinhardNormalizer
         return CupyReinhardNormalizer(method=method)
+    elif backend == "keras":
+        from torchstain.keras.normalizers.macenko import KerasMacenkoNormalizer
+        return KerasMacenkoNormalizer()
     else:
         raise Exception(f'Unknown backend {backend}')
