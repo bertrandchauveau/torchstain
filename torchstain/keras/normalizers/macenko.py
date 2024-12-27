@@ -76,7 +76,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         C = self.__find_concentration(OD, HE)
 
         # normalize stain concentrations
-        maxC = keras.ops.convert_to_tensor([keras.ops.quantile(C[0,:], 99/100), keras.ops.quantile(C[1,:],99/100)])
+        maxC = keras.ops.stack([keras.ops.quantile(C[0,:], 99/100), keras.ops.quantile(C[1,:],99/100)])
 
         return HE, C, maxC
 
