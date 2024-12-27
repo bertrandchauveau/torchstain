@@ -30,7 +30,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         # largest eigenvalues
         #That = ODhat.dot(eigvecs[:,1:3]) #torch.dot does not support 2D tensors
         #https://discuss.pytorch.org/t/how-to-operate-torch-dot-in-matrix-consist-of-vectors-in-pytorch/163134/2
-        That = keras.ops.einsum('ij, ij -> i', ODhat, eigvecs[:,1:3])
+        That = keras.ops.matmul(ODhat, eigvecs)
         
         phi = keras.ops.arctan2(That[:,1],That[:,0])
 
@@ -39,8 +39,10 @@ class KerasMacenkoNormalizer(HENormalizer):
         minPhi = keras.ops.quantile(phi, alpha/100)
         maxPhi = keras.ops.quantile(phi, (100-alpha)/100)
       
-        vMin = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(minPhi), keras.ops.sin(minPhi))].T))
-        vMax = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(maxPhi), keras.ops.sin(maxPhi))].T))
+        #vMin = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(minPhi), keras.ops.sin(minPhi))].T))
+        #vMax = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(maxPhi), keras.ops.sin(maxPhi))].T))
+        vMin = keras.ops.matmul(eigvecs, keras.ops.stack((keras.ops.cos(minPhi), keras.ops.sin(minPhi)))).squeeze(1)
+        vMax = keras.ops.matmul(eigvecs, keras.ops.stack((keras.ops.cos(maxPhi), keras.ops.sin(maxPhi)))).squeeze(1)
 
         # a heuristic to make the vector corresponding to hematoxylin first and the
         # one corresponding to eosin second
