@@ -32,7 +32,7 @@ def lab2rgb(lab):
     
     # convert XYZ -> RGB color domain
     arr = keras.ops.copy(out)
-    arr = keras.ops.dot(arr, _xyz2rgb.T)
+    arr = keras.ops.dot(arr, _xyz2rgb.T)  #torch.dot does not support 2D tensors
     mask = arr > 0.0031308
     arr[mask] = 1.055 * keras.ops.power(arr[mask], 1 / 2.4) - 0.055
     arr[~mask] *= 12.92
