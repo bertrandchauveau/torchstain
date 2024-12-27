@@ -26,7 +26,7 @@ class KerasReinhardNormalizer(HENormalizer):
         lab = rgb2lab(target)
 
         # get summary statistics
-        stack_ = keras.ops.convert_to_tensor(np.array([get_mean_std(x) for x in lab_split(lab)]))
+        stack_ = keras.ops.convert_to_tensor([get_mean_std(x) for x in lab_split(lab)])
         self.target_means = stack_[:, 0]
         self.target_stds = stack_[:, 1]
 
@@ -39,7 +39,7 @@ class KerasReinhardNormalizer(HENormalizer):
         labs = lab_split(lab)
 
         # get summary statistics from LAB
-        stack_ = keras.ops.convert_to_tensor(np.array([get_mean_std(x) for x in labs]))
+        stack_ = keras.ops.convert_to_tensor([get_mean_std(x) for x in labs])
         mus = stack_[:, 0]
         stds = stack_[:, 1]
 
