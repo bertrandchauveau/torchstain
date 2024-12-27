@@ -1,6 +1,7 @@
 import numpy as np
 import keras
 from torchstain.base.normalizers import HENormalizer
+from torchstain.keras.utils import cov
 
 """
 Source code adapted from: https://github.com/schaugf/HEnorm_python
@@ -64,7 +65,7 @@ class KerasMacenkoNormalizer(HENormalizer):
 
         # compute eigenvectors
         #np.cov not in keras.ops
-        _, eigvecs = keras.ops.eigh(np.cov(ODhat.T))
+        _, eigvecs = keras.ops.eigh(cov(ODhat.T))
 
         HE = self.__find_HE(ODhat, eigvecs, alpha)
 
