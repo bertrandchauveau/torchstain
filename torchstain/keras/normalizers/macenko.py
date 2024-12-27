@@ -30,7 +30,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         # largest eigenvalues
         #That = ODhat.dot(eigvecs[:,1:3]) #torch.dot does not support 2D tensors
         #https://discuss.pytorch.org/t/how-to-operate-torch-dot-in-matrix-consist-of-vectors-in-pytorch/163134/2
-        That = ODhat.einsum('ij, ij -> i', eigvecs[:,1:3])
+        That = keras.ops.einsum('ij, ij -> i', ODhat, eigvecs[:,1:3])
         
         phi = keras.ops.arctan2(That[:,1],That[:,0])
 
