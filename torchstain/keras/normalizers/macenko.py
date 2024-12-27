@@ -34,7 +34,6 @@ class KerasMacenkoNormalizer(HENormalizer):
         
         phi = keras.ops.arctan2(That[:,1],That[:,0])
 
-
         #np.percentile not in keras.ops
         minPhi = keras.ops.quantile(phi, alpha/100)
         maxPhi = keras.ops.quantile(phi, (100-alpha)/100)
@@ -70,6 +69,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         # compute eigenvectors
         #np.cov not in keras.ops
         _, eigvecs = keras.ops.eigh(cov(ODhat.T))
+        eigvecs = eigvecs[:, [1, 2]]
 
         HE = self.__find_HE(ODhat, eigvecs, alpha)
 
