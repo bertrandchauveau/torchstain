@@ -6,7 +6,7 @@ from torchstain.base.normalizers import HENormalizer
 Source code adapted from: https://github.com/schaugf/HEnorm_python
 Original implementation: https://github.com/mitkovetta/staining-normalization
 """
-class NumpyMacenkoNormalizer(HENormalizer):
+class KerasMacenkoNormalizer(HENormalizer):
     def __init__(self):
         super().__init__()
 
@@ -36,15 +36,15 @@ class NumpyMacenkoNormalizer(HENormalizer):
         minPhi = keras.ops.quantile(phi, alpha/100)
         maxPhi = keras.ops.quantile(phi, (100-alpha)/100)
       
-        vMin = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor(np.array([(keras.ops.cos(minPhi), keras.ops.sin(minPhi))]).T))
-        vMax = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor(np.array([(keras.ops.cos(maxPhi), keras.ops.sin(maxPhi))]).T))
+        vMin = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(minPhi), keras.ops.sin(minPhi))].T))
+        vMax = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(maxPhi), keras.ops.sin(maxPhi))].T))
 
         # a heuristic to make the vector corresponding to hematoxylin first and the
         # one corresponding to eosin second
         if vMin[0] > vMax[0]:
-            HE = keras.ops.convert_to_tensor(np.array((vMin[:,0], vMax[:,0])).T)
+            HE = keras.ops.convert_to_tensor((vMin[:,0], vMax[:,0]).T)
         else:
-            HE = keras.ops.convert_to_tensor(np.array((vMax[:,0], vMin[:,0])).T)
+            HE = keras.ops.convert_to_tensor((vMax[:,0], vMin[:,0]).T)
 
         return HE
 
@@ -71,7 +71,7 @@ class NumpyMacenkoNormalizer(HENormalizer):
         C = self.__find_concentration(OD, HE)
 
         # normalize stain concentrations
-        maxC = keras.ops.convert_to_tensor((np.array([keras.ops.quantile(C[0,:], 99/100), keras.ops.quantile(C[1,:],99/100)]))
+        maxC = keras.ops.convert_to_tensor([keras.ops.quantile(C[0,:], 99/100), keras.ops.quantile(C[1,:],99/100)])
 
         return HE, C, maxC
 
