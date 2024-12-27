@@ -31,7 +31,7 @@ def lab2rgb(lab):
     out *= keras.ops.convert_to_tensor(np.array((0.95047, 1., 1.08883), dtype=out.dtype))
     
     # convert XYZ -> RGB color domain
-    arr = out.copy()
+    arr = keras.ops.copy(out)
     arr = keras.ops.dot(arr, _xyz2rgb.T)
     mask = arr > 0.0031308
     arr[mask] = 1.055 * keras.ops.power(arr[mask], 1 / 2.4) - 0.055
