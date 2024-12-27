@@ -126,12 +126,12 @@ class KerasMacenkoNormalizer(HENormalizer):
 
         if stains:
             # unmix hematoxylin and eosin
-            H = keras.ops.multiply(Io, keras.ops.exp(keras.ops.expand_dims(-self.HERef[:,0], axis=1).dot(keras.ops.expand_dims(C2[0,:], axis=0))))
+            H = keras.ops.multiply(Io, keras.ops.exp(keras.ops.matmul(keras.ops.expand_dims(-self.HERef[:, 0], -1), keras.ops.expand_dims(C[0, :], 0))))
             H[H > 255] = 255
             H = keras.ops.cast(keras.ops.reshape(H.T, (h, w, c)), dtype="uint8")
 
-            E = keras.ops.multiply(Io, keras.ops.exp(keras.ops.expand_dims(-self.HERef[:,1], axis=1).dot(keras.ops.expand_dims(C2[1,:], axis=0))))
+            E = keras.ops.multiply(Io, keras.ops.exp(keras.ops.matmul(keras.ops.expand_dims(-self.HERef[:, 1], -1), keras.ops.expand_dims(C[1, :], 0))))
             E[E > 255] = 255
             E = keras.ops.cast(keras.ops.reshape(E.T, (h, w, c)), dtype="uint8")
-
+ 
         return Inorm, H, E
