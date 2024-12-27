@@ -40,15 +40,15 @@ class KerasMacenkoNormalizer(HENormalizer):
       
         #vMin = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(minPhi), keras.ops.sin(minPhi))].T))
         #vMax = eigvecs[:,1:3].dot(keras.ops.convert_to_tensor([(keras.ops.cos(maxPhi), keras.ops.sin(maxPhi))].T))
-        vMin = keras.ops.matmul(eigvecs, keras.ops.stack((keras.ops.cos(minPhi), keras.ops.sin(minPhi)))).squeeze(1)
-        vMax = keras.ops.matmul(eigvecs, keras.ops.stack((keras.ops.cos(maxPhi), keras.ops.sin(maxPhi)))).squeeze(1)
+        vMin = keras.ops.expand_dims(keras.ops.matmul(eigvecs, keras.ops.stack((keras.ops.cos(minPhi), keras.ops.sin(minPhi)))), 1)
+        vMax = keras.ops.expand_dims(keras.ops.matmul(eigvecs, keras.ops.stack((keras.ops.cos(maxPhi), keras.ops.sin(maxPhi)))), 1)
 
         # a heuristic to make the vector corresponding to hematoxylin first and the
         # one corresponding to eosin second
         if vMin[0] > vMax[0]:
-            HE = keras.ops.convert_to_tensor((vMin[:,0], vMax[:,0]).T)
+            HE = keras.ops.convert_to_tensor((vMin[:,0], vMax[:,0])).T
         else:
-            HE = keras.ops.convert_to_tensor((vMax[:,0], vMin[:,0]).T)
+            HE = keras.ops.convert_to_tensor((vMax[:,0], vMin[:,0])).T
 
         return HE
 
