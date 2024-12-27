@@ -15,14 +15,14 @@ def rgb2lab(rgb):
     rgb = keras.ops.cast(rgb, dtype="float32")
 
     # convert rgb -> xyz color domain
-    arr = rgb.copy()
+    arr = keras.ops.copy(rgb)
     mask = arr > 0.04045
     arr[mask] = keras.ops.power((arr[mask] + 0.055) / 1.055, 2.4)
     arr[~mask] /= 12.92
     xyz = keras.ops.dot(arr, _rgb2xyz.T)
 
     # scale by CIE XYZ tristimulus values of the reference white point
-    arr = xyz.copy()
+    arr = keras.ops.copy(xyz)
     arr = arr / keras.ops.convert_to_tensor(np.asarray((0.95047, 1., 1.08883), dtype=xyz.dtype))
 
     # Nonlinear distortion and linear transformation
