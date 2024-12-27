@@ -57,7 +57,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         Y = keras.ops.reshape(OD, (-1, 3)).T
 
         # determine concentrations of the individual stains
-        C = keras.ops.lstsq(HE, Y, rcond=None)[0]
+        C = keras.ops.lstsq(HE, Y, rcond=None)#[0] #behavior is different than numpy, cf keras.ops.lstsq()
 
         return C
 
