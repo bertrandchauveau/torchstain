@@ -110,11 +110,14 @@ class KerasMacenkoNormalizer(HENormalizer):
 
         HE, C, maxC = self.__compute_matrices(I, Io, alpha, beta)
 
-        maxC = keras.ops.divide(maxC, self.maxCRef)
-        C2 = keras.ops.divide(C, maxC[:, np.newaxis])
+        #maxC = keras.ops.divide(maxC, self.maxCRef)
+        #C2 = keras.ops.divide(C, maxC[:, np.newaxis])
+        # normalize stain concentrations
+        C *= keras.ops.expand_dims(self.maxCRef / maxC, -1)
 
         # recreate the image using reference mixing matrix
-        Inorm = keras.ops.multiply(Io, keras.ops.exp(-self.HERef.dot(C2)))
+        #Inorm = keras.ops.multiply(Io, keras.ops.exp(-self.HERef.dot(C2)))
+        Inorm = Io * keras.ops.exp(-keras.ops.matmul(self.HERef, C))
         Inorm[Inorm > 255] = 255
         Inorm = keras.ops.cast(keras.ops.reshape(Inorm.T, (h, w, c)), dtype="uint8")
 
