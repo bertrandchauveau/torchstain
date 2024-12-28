@@ -21,7 +21,7 @@ def rgb2lab(rgb):
     arr[~mask] /= 12.92
     #xyz = keras.ops.dot(arr, _rgb2xyz.T)  #torch does not support 2D tensors
     #https://discuss.pytorch.org/t/how-to-operate-torch-dot-in-matrix-consist-of-vectors-in-pytorch/163134/2
-    xyz = keras.ops.matmul(arr, _rgb2xyz.T)
+    xyz = keras.ops.matmul(arr, keras.ops.transpose(_rgb2xyz))
 
     # scale by CIE XYZ tristimulus values of the reference white point
     arr = keras.ops.copy(xyz)
