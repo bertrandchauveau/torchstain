@@ -34,7 +34,7 @@ def lab2rgb(lab):
     arr = keras.ops.copy(out)
     #arr = keras.ops.dot(arr, _xyz2rgb.T)  #torch.dot does not support 2D tensors
     #https://discuss.pytorch.org/t/how-to-operate-torch-dot-in-matrix-consist-of-vectors-in-pytorch/163134/2
-    arr = keras.ops.matmul(arr, _xyz2rgb.T)
+    arr = keras.ops.matmul(arr, keras.ops.transpose(_xyz2rgb))
     mask = arr > 0.0031308
     arr[mask] = 1.055 * keras.ops.power(arr[mask], 1 / 2.4) - 0.055
     arr[~mask] *= 12.92
