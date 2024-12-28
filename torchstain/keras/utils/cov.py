@@ -4,6 +4,6 @@ def cov(x):
     """
     https://en.wikipedia.org/wiki/Covariance_matrix
     """
-    E_x = x.mean(dim=1)
+    E_x = keras.ops.mean(x, axis=1)
     x = x - E_x[:, None]
-    return keras.ops.matmul(x, x.T) / (x.size(1) - 1)
+    return keras.ops.matmul(x, x.T) / (keras.ops.shape(x)[1] - 1)
