@@ -6,4 +6,4 @@ def cov(x):
     """
     E_x = keras.ops.mean(x, axis=1)
     x = x - E_x[:, None]
-    return keras.ops.matmul(x, x.T) / (keras.ops.shape(x)[1] - 1)
+    return keras.ops.matmul(x, keras.ops.transpose(x)) / (keras.ops.shape(x)[1] - 1)
