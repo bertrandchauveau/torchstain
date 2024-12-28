@@ -2,6 +2,7 @@ import numpy as np
 import keras
 from torchstain.base.normalizers import HENormalizer
 from torchstain.keras.utils import cov
+from torchstain.keras.utils import custom_lstsq
 
 """
 Source code adapted from: https://github.com/schaugf/HEnorm_python
@@ -57,7 +58,8 @@ class KerasMacenkoNormalizer(HENormalizer):
         Y = keras.ops.reshape(OD, (-1, 3)).T
 
         # determine concentrations of the individual stains
-        C = keras.ops.lstsq(HE, Y, rcond=None)#[0] #behavior is different than numpy, cf keras.ops.lstsq()
+        #C = keras.ops.lstsq(HE, Y, rcond=None)#[0] #behavior is different than numpy, cf keras.ops.lstsq()
+        C = custom_lstsq(HE, Y)  #torch implementation is very slow on GPU
 
         return C
 
