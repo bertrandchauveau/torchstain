@@ -62,7 +62,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         return C
 
     def __compute_matrices(self, I, Io, alpha, beta):
-        I = I.reshape((-1,3))
+        I = keras.ops.reshape(I, (-1,3))
 
         OD, ODhat = self.__convert_rgb2od(I, Io=Io, beta=beta)
 
@@ -106,7 +106,7 @@ class KerasMacenkoNormalizer(HENormalizer):
             Macenko et al., ISBI 2009
         '''
         h, w, c = I.shape
-        I = I.reshape((-1,3))
+        I = keras.ops.reshape(I, (-1,3))
 
         HE, C, maxC = self.__compute_matrices(I, Io, alpha, beta)
 
