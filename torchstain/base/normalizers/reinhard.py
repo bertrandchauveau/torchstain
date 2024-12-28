@@ -13,6 +13,6 @@ def ReinhardNormalizer(backend='numpy', method=None):
         return CupyReinhardNormalizer(method=method)
     elif backend == "keras":
         from torchstain.keras.normalizers import KerasReinhardNormalizer
-        return KerasReinhardNormalizer()
+        return KerasReinhardNormalizer(method=method)
     else:
         raise Exception(f'Unknown backend {backend}')
