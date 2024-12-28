@@ -47,15 +47,15 @@ class KerasMacenkoNormalizer(HENormalizer):
         # a heuristic to make the vector corresponding to hematoxylin first and the
         # one corresponding to eosin second
         if vMin[0] > vMax[0]:
-            HE = keras.ops.convert_to_tensor((vMin[:,0], vMax[:,0])).T
+            HE = keras.ops.transpose(keras.ops.convert_to_tensor((vMin[:,0], vMax[:,0])))
         else:
-            HE = keras.ops.convert_to_tensor((vMax[:,0], vMin[:,0])).T
+            HE = keras.ops.transpose(keras.ops.convert_to_tensor((vMax[:,0], vMin[:,0])))
 
         return HE
 
     def __find_concentration(self, OD, HE):
         # rows correspond to channels (RGB), columns to OD values
-        Y = keras.ops.reshape(OD, (-1, 3)).T
+        Y = keras.ops.transpose(keras.ops.reshape(OD, (-1, 3)))
 
         # determine concentrations of the individual stains
         #C = keras.ops.lstsq(HE, Y, rcond=None)#[0] #behavior is different than numpy, cf keras.ops.lstsq()
@@ -70,7 +70,7 @@ class KerasMacenkoNormalizer(HENormalizer):
 
         # compute eigenvectors
         #np.cov not in keras.ops
-        _, eigvecs = keras.ops.eigh(cov(ODhat.T))
+        _, eigvecs = keras.ops.eigh(cov(keras.ops.transpose(ODhat)))
         eigvecs = eigvecs[:, [1, 2]]
 
         HE = self.__find_HE(ODhat, eigvecs, alpha)
@@ -121,7 +121,7 @@ class KerasMacenkoNormalizer(HENormalizer):
         #Inorm = keras.ops.multiply(Io, keras.ops.exp(-self.HERef.dot(C2)))
         Inorm = Io * keras.ops.exp(-keras.ops.matmul(self.HERef, C))
         Inorm[Inorm > 255] = 255
-        Inorm = keras.ops.cast(keras.ops.reshape(Inorm.T, (h, w, c)), dtype="uint8")
+        Inorm = keras.ops.cast(keras.ops.reshape(keras.ops.transpose(Inorm), (h, w, c)), dtype="uint8")
 
 
         H, E = None, None
@@ -130,10 +130,10 @@ class KerasMacenkoNormalizer(HENormalizer):
             # unmix hematoxylin and eosin
             H = keras.ops.multiply(Io, keras.ops.exp(keras.ops.matmul(keras.ops.expand_dims(-self.HERef[:, 0], -1), keras.ops.expand_dims(C[0, :], 0))))
             H[H > 255] = 255
-            H = keras.ops.cast(keras.ops.reshape(H.T, (h, w, c)), dtype="uint8")
+            H = keras.ops.cast(keras.ops.reshape(keras.ops.transpose(H), (h, w, c)), dtype="uint8")
 
             E = keras.ops.multiply(Io, keras.ops.exp(keras.ops.matmul(keras.ops.expand_dims(-self.HERef[:, 1], -1), keras.ops.expand_dims(C[1, :], 0))))
             E[E > 255] = 255
-            E = keras.ops.cast(keras.ops.reshape(E.T, (h, w, c)), dtype="uint8")
+            E = keras.ops.cast(keras.ops.reshape(keras.ops.transpose(E), (h, w, c)), dtype="uint8")
  
         return Inorm, H, E
