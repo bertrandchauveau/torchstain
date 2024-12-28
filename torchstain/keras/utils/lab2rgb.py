@@ -28,7 +28,7 @@ def lab2rgb(lab):
     out[~mask] = (out[~mask] - 16.0 / 116.) / 7.787
 
     # rescale to the reference white (illuminant)
-    out *= keras.ops.convert_to_tensor(np.array((0.95047, 1., 1.08883), dtype=out.dtype))
+    out *= keras.ops.convert_to_tensor(np.array((0.95047, 1., 1.08883), dtype="float32"))
     
     # convert XYZ -> RGB color domain
     arr = keras.ops.copy(out)
