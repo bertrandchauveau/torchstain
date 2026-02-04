@@ -2,6 +2,9 @@ def MacenkoNormalizer(backend='torch'):
     if backend == 'numpy':
         from torchstain.numpy.normalizers import NumpyMacenkoNormalizer
         return NumpyMacenkoNormalizer()
+    elif backend == 'cupy':
+        from torchstain.cupy.normalizers import CupyMacenkoNormalizer
+        return CupyMacenkoNormalizer()
     elif backend == "torch":
         from torchstain.torch.normalizers.macenko import TorchMacenkoNormalizer
         return TorchMacenkoNormalizer()
